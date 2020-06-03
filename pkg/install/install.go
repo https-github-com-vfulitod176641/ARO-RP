@@ -158,6 +158,7 @@ func (i *Installer) AdminUpgrade(ctx context.Context) error {
 		action(i.fixLBProbes),
 		action(i.ensureIfReload),
 		action(i.ensureAroOperator),
+		condition{i.aroDeploymentReady, 10 * time.Minute},
 		action(i.upgradeCertificates),
 		action(i.configureAPIServerCertificate),
 		action(i.configureIngressCertificate),
@@ -183,8 +184,10 @@ func (i *Installer) Install(ctx context.Context, installConfig *installconfig.In
 			action(i.createCertificates),
 			action(i.initializeKubernetesClients),
 			condition{i.bootstrapConfigMapReady, 30 * time.Minute},
+			condition{i.readyToDeployAroOperator, 10 * time.Minute},
 			action(i.ensureIfReload),
 			action(i.ensureAroOperator),
+			condition{i.aroDeploymentReady, 15 * time.Minute},
 			action(i.incrInstallPhase),
 		},
 		api.InstallPhaseRemoveBootstrap: {
