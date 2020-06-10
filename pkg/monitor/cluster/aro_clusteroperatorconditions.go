@@ -6,18 +6,12 @@ package cluster
 import (
 	"context"
 
-	"github.com/operator-framework/operator-sdk/pkg/status"
 	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	aro "github.com/Azure/ARO-RP/operator/apis/aro.openshift.io/v1alpha1"
 )
-
-var aroOperatorConditionsExpected = map[status.ConditionType]corev1.ConditionStatus{
-	aro.InternetReachableFromMaster: corev1.ConditionTrue,
-	aro.InternetReachableFromWorker: corev1.ConditionTrue,
-}
 
 func (mon *Monitor) emitAroOperatorConditions(ctx context.Context) error {
 	cluster, err := mon.arocli.Clusters().Get(aro.SingletonClusterName, metav1.GetOptions{})
@@ -28,7 +22,7 @@ func (mon *Monitor) emitAroOperatorConditions(ctx context.Context) error {
 	mon.emitGauge("arooperator.count", int64(len(cluster.Status.Conditions)), nil)
 
 	for _, c := range cluster.Status.Conditions {
-		if aroOperatorConditionIsExpected(&c) {
+		if c.Status == corev1.ConditionTrue {
 			continue
 		}
 
@@ -50,8 +44,4 @@ func (mon *Monitor) emitAroOperatorConditions(ctx context.Context) error {
 	}
 
 	return nil
-}
-
-func aroOperatorConditionIsExpected(c *status.Condition) bool {
-	return c.Status == aroOperatorConditionsExpected[c.Type]
 }
