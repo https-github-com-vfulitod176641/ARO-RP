@@ -253,10 +253,8 @@ func (dh *dynamicHelper) CreateOrUpdate(ctx context.Context, o *unstructured.Uns
 			return nil
 		}
 
-		if dh.updatePolicy.LogChanges {
-			dh.logDiff(existing, o)
-		} else {
-			dh.log.Info("Update " + keyFuncO(o))
+		if !dh.logDiff(existing, o) {
+			dh.log.Info("Update ", keyFuncO(o))
 		}
 
 		o.SetResourceVersion(rv)
@@ -277,16 +275,11 @@ func (dh *dynamicHelper) needsUpdate(existing, o *unstructured.Unstructured) boo
 }
 
 func (dh *dynamicHelper) logDiff(existing, o *unstructured.Unstructured) bool {
-	// TODO: we should have tests that monitor these diffs:
-	// 1) when a cluster is created
-	// 2) when an update is run twice back-to-back on the same cluster
-
-	// Don't show a diff if kind is Secret
 	gk := o.GroupVersionKind().GroupKind()
 	diffShown := false
-	if gk.String() != "Secret" {
+	if dh.updatePolicy.LogChanges && gk.String() != "Secret" { // Don't show a diff if kind is Secret
 		if diff := cmp.Diff(*existing, *o); diff != "" {
-			dh.log.Info("Update "+keyFuncO(o), diff)
+			dh.log.Info("Update ", keyFuncO(o), diff)
 			diffShown = true
 		}
 	}

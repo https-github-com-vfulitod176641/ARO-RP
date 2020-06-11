@@ -1838,12 +1838,13 @@
 
 [[projects]]
   branch = "origin-4.3-kubernetes-1.16.2"
-  digest = "1:7ffe1140ffd6276a267f11b87ee30b3865b87fe0493c6363c61045e2ca303bd3"
+  digest = "1:f7a96c79edeb80e34867fac15dbd9221c1b2b3b2265cb702d4c9382c7a3a1700"
   name = "k8s.io/client-go"
   packages = [
     "discovery",
     "discovery/fake",
     "dynamic",
+    "dynamic/fake",
     "kubernetes",
     "kubernetes/fake",
     "kubernetes/scheme",
@@ -2267,9 +2268,11 @@
     "k8s.io/client-go/discovery",
     "k8s.io/client-go/discovery/fake",
     "k8s.io/client-go/dynamic",
+    "k8s.io/client-go/dynamic/fake",
     "k8s.io/client-go/kubernetes",
     "k8s.io/client-go/kubernetes/fake",
     "k8s.io/client-go/kubernetes/scheme",
+    "k8s.io/client-go/kubernetes/typed/apps/v1",
     "k8s.io/client-go/kubernetes/typed/core/v1",
     "k8s.io/client-go/rest",
     "k8s.io/client-go/testing",
@@ -2282,6 +2285,7 @@
     "k8s.io/code-generator/cmd/deepcopy-gen",
     "k8s.io/gengo/generator",
     "sigs.k8s.io/controller-runtime",
+    "sigs.k8s.io/controller-runtime/pkg/controller/controllerutil",
     "sigs.k8s.io/controller-runtime/pkg/event",
     "sigs.k8s.io/controller-runtime/pkg/predicate",
     "sigs.k8s.io/controller-runtime/pkg/reconcile",

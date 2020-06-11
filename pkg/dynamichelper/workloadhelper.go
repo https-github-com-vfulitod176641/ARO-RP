@@ -30,7 +30,7 @@ func HashWorkloadConfigs(resources []*unstructured.Unstructured) {
 			continue
 		}
 
-		configToHash[keyFunc(o.GroupVersionKind().GroupKind(), o.GetNamespace(), o.GetName())] = getHash(o)
+		configToHash[keyFuncO(o)] = getHash(o)
 	}
 
 	// iterate over all workload controllers and add annotations with the hashes
