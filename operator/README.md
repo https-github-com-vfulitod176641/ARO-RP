@@ -22,8 +22,6 @@ There will be use cases where we may want to remediate end user decisions automa
 Carrying out remediation locally is advantageous because it is likely to be simpler,
 more reliable, and with a shorter time to remediate.
 
-* monitor and repair pull secret (acr part)
-
 ### End user warnings
 
 * [TODO] see https://docs.openshift.com/container-platform/4.4/web_console/customizing-the-web-console.html#creating-custom-notification-banners_customizing-web-console
@@ -38,6 +36,14 @@ post-install configurations should probably move here.
 
 ## Developer documentation
 
+### How to Run a pre built operator image
+
+Add the following to your "env" before running the rp
+```sh
+export RP_IMAGE_ACR=arointsvc
+export ARO_IMAGE_TAG=latest
+```
+
 ### How to Run the operator locally (out of cluster)
 
 Make sure KUBECONFIG is set:
@@ -51,15 +57,12 @@ go run ./cmd/aro operator
 
 ### How to run a custom operator image
 
-In one terminal
+Add the following to your "env" before running the rp
 ```sh
 export ARO_IMAGE=quay.io/asalkeld/aos-init:latest #(change to yours)
-go run ./cmd/aro rp
 ```
 
-In a second terminal
 ```sh
-export ARO_IMAGE=quay.io/asalkeld/aos-init:latest #(change to yours)
 make publish-image-aro
 
 #Then run an update
