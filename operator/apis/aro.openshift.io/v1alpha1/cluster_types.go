@@ -12,9 +12,8 @@ import (
 const SingletonClusterName = "cluster"
 
 var (
-	InternetReachableFromMaster       status.ConditionType = "InternetReachableFromMaster"
-	InternetReachableFromWorker       status.ConditionType = "InternetReachableFromWorker"
-	ClusterServicePrincipalAuthorized status.ConditionType = "ClusterServicePrincipalAuthorized"
+	InternetReachableFromMaster status.ConditionType = "InternetReachableFromMaster"
+	InternetReachableFromWorker status.ConditionType = "InternetReachableFromWorker"
 )
 
 type GenevaLoggingSpec struct {
@@ -28,11 +27,6 @@ type GenevaLoggingSpec struct {
 	MonitoringGCSEnvironment string `json:"monitoringGCSEnvironment,omitempty"`
 }
 
-type ServicePrincipalValidationSpec struct {
-	MasterSubnetID  string   `json:"masterSubnetId,omitempty"`
-	WorkerSubnetIDs []string `json:"workerSubnetIds,omitempty"`
-}
-
 type InternetCheckerSpec struct {
 	Sites []string `json:"sites,omitempty"`
 }
@@ -40,10 +34,9 @@ type InternetCheckerSpec struct {
 // ClusterSpec defines the desired state of Cluster
 type ClusterSpec struct {
 	// ResourceID is the Azure resourceId of the cluster
-	ResourceID                 string                         `json:"resourceId,omitempty"`
-	GenevaLogging              GenevaLoggingSpec              `json:"genevaLogging,omitempty"`
-	ServicePrincipalValidation ServicePrincipalValidationSpec `json:"servicePrincipal,omitempty"`
-	InternetChecker            InternetCheckerSpec            `json:"internetChecker,omitempty"`
+	ResourceID      string              `json:"resourceId,omitempty"`
+	GenevaLogging   GenevaLoggingSpec   `json:"genevaLogging,omitempty"`
+	InternetChecker InternetCheckerSpec `json:"internetChecker,omitempty"`
 }
 
 // ClusterStatus defines the observed state of Cluster

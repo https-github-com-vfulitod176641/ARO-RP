@@ -100,15 +100,6 @@ func operator(ctx context.Context, log *logrus.Entry) error {
 			log.Errorf("unable to create controller: PullSecret %v", err)
 			return err
 		}
-		if err = (&controllers.CPValidator{
-			Kubernetescli: kubernetescli,
-			AROCli:        arocli,
-			Log:           log.WithField("controller", controllers.CPValidatorControllerName),
-			Scheme:        mgr.GetScheme(),
-		}).SetupWithManager(mgr); err != nil {
-			log.Errorf("unable to create controller: CPValidator %v", err)
-			return err
-		}
 		if err = (&controllers.AlertWebhookReconciler{
 			Kubernetescli: kubernetescli,
 			Log:           log.WithField("controller", controllers.AlertwebhookControllerName),

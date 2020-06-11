@@ -77,7 +77,7 @@ func setStaticStatus(status *aro.ClusterStatus) {
 	// cleanup any old conditions
 	for _, cond := range status.Conditions {
 		switch cond.Type {
-		case aro.InternetReachableFromMaster, aro.InternetReachableFromWorker, aro.ClusterServicePrincipalAuthorized:
+		case aro.InternetReachableFromMaster, aro.InternetReachableFromWorker:
 		default:
 			status.Conditions.RemoveCondition(cond.Type)
 		}

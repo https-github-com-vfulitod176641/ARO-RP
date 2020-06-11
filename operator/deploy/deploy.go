@@ -120,9 +120,6 @@ func New(log *logrus.Entry, e env.Interface, oc *api.OpenShiftCluster, cli kuber
 				MonitoringGCSRegion:      e.Location(),
 				MonitoringTenant:         e.Location(),
 			},
-			ServicePrincipalValidation: aro.ServicePrincipalValidationSpec{
-				MasterSubnetID: oc.Properties.MasterProfile.SubnetID,
-			},
 			InternetChecker: aro.InternetCheckerSpec{
 				Sites: []string{
 					"https://registry.redhat.io",
@@ -139,9 +136,6 @@ func New(log *logrus.Entry, e env.Interface, oc *api.OpenShiftCluster, cli kuber
 		cli:    cli,
 		seccli: seccli,
 		arocli: arocli,
-	}
-	for _, wp := range oc.Properties.WorkerProfiles {
-		o.cluserSpec.ServicePrincipalValidation.WorkerSubnetIDs = append(o.cluserSpec.ServicePrincipalValidation.WorkerSubnetIDs, wp.SubnetID)
 	}
 
 	for _, reg := range oc.Properties.RegistryProfiles {
@@ -364,8 +358,8 @@ func (o *operator) resources(ctx context.Context) ([]runtime.Object, error) {
 				Name:      "service-principal",
 				Namespace: o.namespace,
 			},
-			Type: corev1.SecretTypeOpaque,
-			Data: map[string][]byte{"servicePrincipal": o.servicePrincipal},
+			Type:       corev1.SecretTypeOpaque,
+			StringData: map[string]string{"servicePrincipal": string(o.servicePrincipal)},
 		},
 		ssc,
 		o.deployment("master"),
