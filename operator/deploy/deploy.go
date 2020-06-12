@@ -71,7 +71,8 @@ type operator struct {
 }
 
 func New(log *logrus.Entry, e env.Interface, oc *api.OpenShiftCluster, cli kubernetes.Interface, seccli securityclient.Interface, arocli aroclient.AroV1alpha1Interface) (Operator, error) {
-	image, err := aroOperatorImage(log, e)
+	_, isDev := e.(env.Dev)
+	image, err := aroOperatorImage(log, isDev, e.ACRName()+".azurecr.io")
 	if err != nil {
 		return nil, err
 	}
@@ -158,9 +159,9 @@ func New(log *logrus.Entry, e env.Interface, oc *api.OpenShiftCluster, cli kuber
 	return o, nil
 }
 
-func aroOperatorImage(log *logrus.Entry, e env.Interface) (string, error) {
+func aroOperatorImage(log *logrus.Entry, isDev bool, acrRegName string) (string, error) {
 	imageTag := version.GitCommit
-	if _, ok := e.(env.Dev); ok {
+	if isDev {
 		override := os.Getenv("ARO_IMAGE")
 		if override != "" {
 			log.Warnf("overriding ARO Image=%s", override)
@@ -170,11 +171,10 @@ func aroOperatorImage(log *logrus.Entry, e env.Interface) (string, error) {
 		// in dev we may not have version.GitCommit set as the rp is run as "go run ./cmd/aro rp"
 		// for a developer it needs to be ARO_IMAGE_TAG else "latest"
 		imageTag = os.Getenv("ARO_IMAGE_TAG")
-		if imageTag == "" {
-			imageTag = "latest"
-			log.Warnf("defaulting ARO ImageTag=%s", imageTag)
-		} else {
+		if imageTag != "" {
 			log.Warnf("overriding ARO ImageTag=%s", imageTag)
+		} else {
+			imageTag = version.GitCommit
 		}
 	}
 	if imageTag == version.GitCommitUnknown {
@@ -183,7 +183,7 @@ func aroOperatorImage(log *logrus.Entry, e env.Interface) (string, error) {
 	if strings.HasSuffix(imageTag, "-dirty") {
 		log.Warnf("using non-standard imageTag=%s", imageTag)
 	}
-	return fmt.Sprintf(aroOperatorImageFormat, e.ACRName()+".azurecr.io", imageTag), nil
+	return fmt.Sprintf(aroOperatorImageFormat, acrRegName, imageTag), nil
 }
 
 func (o *operator) securityContextConstraints(ctx context.Context, name, serviceAccountName string) (*securityv1.SecurityContextConstraints, error) {
