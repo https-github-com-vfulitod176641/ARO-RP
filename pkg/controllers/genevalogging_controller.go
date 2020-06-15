@@ -89,6 +89,12 @@ func (r *GenevaloggingReconciler) Reconcile(request ctrl.Request) (ctrl.Result, 
 			r.Log.Error(err)
 			return reconcile.Result{}, err
 		}
+		if un.GetKind() == "Secret" {
+			// since we are copying a secret from our namespace it has a Data
+			// and the dynamice.clean() converts everything to StringData so
+			// we need to do the same here to prevent the secret from updating.
+			dynamichelper.ConvertSecretData(*un)
+		}
 
 		// This sets the reference on all objects that we create
 		// to our cluster instance. This causes the Owns() below to work and

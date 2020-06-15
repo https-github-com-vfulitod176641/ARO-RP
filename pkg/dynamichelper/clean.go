@@ -43,9 +43,9 @@ func cleanPodTemplate(obj map[string]interface{}) {
 	cleanMetadata(obj)
 }
 
-// convertSecretData converts data fields in a Secret to stringData fields
+// ConvertSecretData converts data fields in a Secret to stringData fields
 // wherever it can.
-func convertSecretData(o unstructured.Unstructured) error {
+func ConvertSecretData(o unstructured.Unstructured) error {
 	if _, found := o.Object["data"]; !found {
 		return nil
 	}
@@ -142,7 +142,7 @@ func clean(o unstructured.Unstructured) error {
 			}
 		}
 
-		err := convertSecretData(o)
+		err := ConvertSecretData(o)
 		if err != nil {
 			return err
 		}
