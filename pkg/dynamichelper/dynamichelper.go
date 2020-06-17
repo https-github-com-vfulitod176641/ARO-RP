@@ -69,7 +69,10 @@ func (dh *dynamicHelper) refreshAPIResources() error {
 	if err != nil {
 		return err
 	}
-	_, dh.apiresources, err = cli.ServerGroupsAndResources()
+	err = retry.OnError(wait.Backoff{Steps: 5, Duration: 10 * time.Second, Factor: 1.5}, discovery.IsGroupDiscoveryFailedError, func() error {
+		_, dh.apiresources, err = cli.ServerGroupsAndResources()
+		return err
+	})
 	if err != nil {
 		return err
 	}
@@ -183,15 +186,13 @@ func ToUnstructured(ro runtime.Object) (*unstructured.Unstructured, error) {
 	return obj, nil
 }
 
-func IsRetryableError(err error) bool {
+func isNotFoundError(err error) bool {
 	if err == nil {
 		return false
 	}
 	switch typeOfErr := err.(type) {
 	case (*api.CloudError):
 		return (typeOfErr.Code == api.CloudErrorCodeNotFound)
-	case (*discovery.ErrGroupDiscoveryFailed):
-		return true
 	default:
 		return false
 	}
@@ -203,12 +204,12 @@ func (dh *dynamicHelper) findGVRWithRefresh(groupKind, optionalVersion string) (
 	}
 	// this is ugly and will get removed in favour of https://github.com/Azure/ARO-RP/pull/769
 	var gvr *schema.GroupVersionResource
-	err := retry.OnError(wait.Backoff{Steps: 5, Duration: 30 * time.Second, Factor: 1.5}, IsRetryableError, func() error {
+	err := retry.OnError(retry.DefaultRetry, isNotFoundError, func() error {
 		// this is used at cluster start up when kinds are still getting
 		// registered.
 		var gvrErr error
 		gvr, gvrErr = dh.findGVR(groupKind, optionalVersion)
-		if IsRetryableError(gvrErr) {
+		if isNotFoundError(gvrErr) {
 			dh.log.Infof("refreshAPIResources retrying")
 			if refErr := dh.refreshAPIResources(); refErr != nil {
 				dh.log.Infof("refreshAPIResources error: %v", refErr)
