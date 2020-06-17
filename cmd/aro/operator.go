@@ -79,6 +79,10 @@ func operator(ctx context.Context, log *logrus.Entry) error {
 	}
 
 	placement, err := getPlacement(log)
+	if err != nil {
+		log.Errorf("could not get node placement %v", err)
+		return err
+	}
 	if placement == "master" {
 		if err = (&controllers.GenevaloggingReconciler{
 			Kubernetescli: kubernetescli,

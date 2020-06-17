@@ -18,7 +18,7 @@ type pullSecret struct {
 // Replace will replace the secrets in the 'secrets' map and return the new
 // pull secrets, a list of repositories that changed or an error.
 func Replace(_ps []byte, secrets map[string]string) ([]byte, []string, error) {
-	if _ps == nil || len(_ps) == 0 {
+	if len(_ps) == 0 {
 		_ps = []byte("{}")
 	}
 
@@ -50,7 +50,7 @@ func Replace(_ps []byte, secrets map[string]string) ([]byte, []string, error) {
 }
 
 func Auths(_ps []byte) (map[string]map[string]interface{}, error) {
-	if _ps == nil || len(_ps) == 0 {
+	if len(_ps) == 0 {
 		return nil, nil
 	}
 

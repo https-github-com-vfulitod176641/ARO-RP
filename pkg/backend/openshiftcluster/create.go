@@ -149,7 +149,7 @@ func (m *Manager) Create(ctx context.Context) error {
 		return err
 	}
 
-	vnetID, masterSubnetName, err := subnet.Split(m.doc.OpenShiftCluster.Properties.MasterProfile.SubnetID)
+	_, masterSubnetName, err := subnet.Split(m.doc.OpenShiftCluster.Properties.MasterProfile.SubnetID)
 	if err != nil {
 		return err
 	}

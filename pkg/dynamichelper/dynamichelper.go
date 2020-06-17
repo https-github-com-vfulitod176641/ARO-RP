@@ -243,7 +243,7 @@ func (dh *dynamicHelper) CreateOrUpdate(ctx context.Context, o *unstructured.Uns
 		rv := existing.GetResourceVersion()
 
 		if dh.updatePolicy.IgnoreDefaults {
-			err := clean(*existing)
+			err = clean(*existing)
 			if err != nil {
 				return err
 			}
@@ -268,11 +268,7 @@ func (dh *dynamicHelper) CreateOrUpdate(ctx context.Context, o *unstructured.Uns
 
 func (dh *dynamicHelper) needsUpdate(existing, o *unstructured.Unstructured) bool {
 	handleSpecialObjects(*existing, *o)
-	if reflect.DeepEqual(*existing, *o) {
-		return false
-	}
-
-	return true
+	return !reflect.DeepEqual(*existing, *o)
 }
 
 func (dh *dynamicHelper) logDiff(existing, o *unstructured.Unstructured) bool {

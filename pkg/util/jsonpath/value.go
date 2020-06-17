@@ -21,11 +21,6 @@ func (v mapval) Delete()             { v.m.SetMapIndex(v.k, reflect.Value{}) }
 
 var _ value = mapval{}
 
-type sliceval struct {
-	s reflect.Value
-	i int
-}
-
 type val struct {
 	v reflect.Value
 }

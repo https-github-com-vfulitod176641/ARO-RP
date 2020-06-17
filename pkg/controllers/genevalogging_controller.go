@@ -84,7 +84,8 @@ func (r *GenevaloggingReconciler) Reconcile(request ctrl.Request) (ctrl.Result, 
 
 	var objects []*unstructured.Unstructured
 	for _, res := range resources {
-		un, err := dynamichelper.ToUnstructured(res)
+		var un *unstructured.Unstructured
+		un, err = dynamichelper.ToUnstructured(res)
 		if err != nil {
 			r.Log.Error(err)
 			return reconcile.Result{}, err
@@ -93,7 +94,11 @@ func (r *GenevaloggingReconciler) Reconcile(request ctrl.Request) (ctrl.Result, 
 			// since we are copying a secret from our namespace it has a Data
 			// and the dynamice.clean() converts everything to StringData so
 			// we need to do the same here to prevent the secret from updating.
-			dynamichelper.ConvertSecretData(*un)
+			err = dynamichelper.ConvertSecretData(*un)
+			if err != nil {
+				r.Log.Error(err)
+				return reconcile.Result{}, err
+			}
 		}
 
 		// This sets the reference on all objects that we create

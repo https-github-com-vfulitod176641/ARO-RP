@@ -321,8 +321,7 @@ func (o *operator) resources(ctx context.Context) ([]runtime.Object, error) {
 
 	// create a secret here for genevalogging, later we will copy it to
 	// the genevalogging namespace.
-
-	for _, obj := range []runtime.Object{
+	return append(results,
 		&corev1.Secret{
 			TypeMeta: metav1.TypeMeta{
 				Kind:       "Secret",
@@ -373,12 +372,7 @@ func (o *operator) resources(ctx context.Context) ([]runtime.Object, error) {
 				Name: "cluster",
 			},
 			Spec: *o.cluserSpec,
-		},
-	} {
-		results = append(results, obj)
-	}
-
-	return results, nil
+		}), nil
 }
 
 func (o *operator) CreateOrUpdate(ctx context.Context) error {
@@ -389,7 +383,8 @@ func (o *operator) CreateOrUpdate(ctx context.Context) error {
 
 	objects := []*unstructured.Unstructured{}
 	for _, res := range resources {
-		un, err := dynamichelper.ToUnstructured(res)
+		var un *unstructured.Unstructured
+		un, err = dynamichelper.ToUnstructured(res)
 		if err != nil {
 			return err
 		}

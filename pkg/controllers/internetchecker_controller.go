@@ -28,7 +28,6 @@ type InternetChecker struct {
 	AROCli        aroclient.AroV1alpha1Interface
 	Log           *logrus.Entry
 	Scheme        *runtime.Scheme
-	testurls      []string
 	sr            *StatusReporter
 	Placement     string
 }

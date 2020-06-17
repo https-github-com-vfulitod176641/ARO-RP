@@ -94,7 +94,10 @@ func triggerAlertReconcile(secret *corev1.Secret) bool {
 
 func aroserverRun(log *logrus.Entry) {
 	http.HandleFunc("/", func(w http.ResponseWriter, req *http.Request) {
-		io.WriteString(w, "")
+		_, err := io.WriteString(w, "")
+		if err != nil {
+			log.Debug(err)
+		}
 	})
 	go func() {
 		if err := http.ListenAndServe(":8081", nil); err != nil && err != http.ErrServerClosed {

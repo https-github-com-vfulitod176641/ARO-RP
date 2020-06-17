@@ -101,8 +101,6 @@ func (r rules) Set(i interface{}, x interface{}) {
 	for _, i := range is {
 		i.Set(reflect.ValueOf(x))
 	}
-
-	return
 }
 
 func (r rules) Delete(i interface{}) {
@@ -116,8 +114,6 @@ func (r rules) Delete(i interface{}) {
 			i.Delete()
 		}
 	}
-
-	return
 }
 
 func (r rules) DeleteIfMatch(i interface{}, j interface{}) {
@@ -131,8 +127,6 @@ func (r rules) DeleteIfMatch(i interface{}, j interface{}) {
 			i.Delete()
 		}
 	}
-
-	return
 }
 
 func skipPointers(i reflect.Value) reflect.Value {
